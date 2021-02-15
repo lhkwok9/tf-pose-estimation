@@ -19,6 +19,7 @@ Implemented features are listed here : [features](./etcs/feature.md)
 - 2019.3.12 Add new models using mobilenet-v2 architecture. See : [experiments.md](./etcs/experiments.md)
 - 2018.5.21 Post-processing part is implemented in c++. It is required compiling the part. See: https://github.com/ildoonet/tf-pose-estimation/tree/master/src/pafprocess
 - 2018.2.7 Arguments in run.py script changed. Support dynamic input size.
+- 2021.2.15 (forked) Add folder update_tf2_3. Update the original files using the folder. Environment with tensorflow2.3 is now supported.
 
 ## Install
 
@@ -53,7 +54,7 @@ $ pip3 install -r requirements.txt
 Build c++ library for post processing. See : https://github.com/ildoonet/tf-pose-estimation/tree/master/tf_pose/pafprocess
 ```
 $ cd tf_pose/pafprocess
-$ swig -python -c++ pafprocess.i && python3 setup.py build_ext --inplace
+$ swig -python -c++ pafprocess.i && python3 setup.py build_ext --inplace # Or, `swig -python -c++ pafprocess.i && python setup.py build_ext --inplace`
 ```
 
 ### Package Install
@@ -103,7 +104,7 @@ The image flag MUST be relative to the src folder with no "~", i.e:
 
 Then you will see the screen as below with pafmap, heatmap, result and etc.
 
-![inferent_result](./etcs/inference_result2.png)
+![inferent_result](./update_tf2_3/inference_result3.jpg)
 
 ### Realtime Webcam
 
