@@ -29,7 +29,7 @@ You need dependencies below.
 
 - python3
 - tensorflow 1.4.1+
-- opencv3, protobuf, python3-tk
+- opencv3, protobuf, python3-tk, tf_slim
 - slidingwindow
   - https://github.com/adamrehn/slidingwindow
   - I copied from the above git repo to modify few things.
