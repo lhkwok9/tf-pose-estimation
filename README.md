@@ -28,7 +28,7 @@ Implemented features are listed here : [features](./etcs/feature.md)
 You need dependencies below.
 
 - python3
-- tensorflow 1.4.1+
+- tensorflow 2.3.0(testing)
 - opencv3, protobuf, python3-tk, tf_slim
 - slidingwindow
   - https://github.com/adamrehn/slidingwindow
