@@ -11,7 +11,6 @@ import time
 from tf_pose import common
 from tf_pose.common import CocoPart
 from tf_pose.tensblur.smoother import Smoother
-import tensorflow.contrib.tensorrt as trt
 
 try:
     from tf_pose.pafprocess import pafprocess
@@ -32,7 +31,6 @@ logger.setLevel(logging.INFO)
 
 def _round(v):
     return int(round(v))
-
 
 def _include_part(part_list, part_idx):
     for part in part_list:
@@ -308,8 +306,8 @@ class TfPoseEstimator:
 
         # load graph
         logger.info('loading graph from %s(default size=%dx%d)' % (graph_path, target_size[0], target_size[1]))
-        with tf.gfile.GFile(graph_path, 'rb') as f:
-            graph_def = tf.GraphDef()
+        with tf.io.gfile.GFile(graph_path, 'rb') as f:
+            graph_def = tf.compat.v1.GraphDef()
             graph_def.ParseFromString(f.read())
 
         if trt_bool is True:
@@ -327,22 +325,20 @@ class TfPoseEstimator:
                 use_calibration=True,
             )
 
-        self.graph = tf.get_default_graph()
-        tf.import_graph_def(graph_def, name='TfPoseEstimator')
-        self.persistent_sess = tf.Session(graph=self.graph, config=tf_config)
-
-        for ts in [n.name for n in tf.get_default_graph().as_graph_def().node]:
+        self.graph = tf.compat.v1.get_default_graph()
+        tf.graph_util.import_graph_def(graph_def)#, name='TfPoseEstimator')
+        self.persistent_sess = tf.compat.v1.Session(graph=self.graph, config=tf_config)
+       
+        for ts in [n.name for n in tf.compat.v1.get_default_graph().as_graph_def().node]:
             print(ts)
+        
+        self.tensor_image = self.graph.get_tensor_by_name('image:0')
+        self.tensor_output = self.graph.get_tensor_by_name('Openpose/concat_stage7:0')
 
-        self.tensor_image = self.graph.get_tensor_by_name('TfPoseEstimator/image:0')
-        self.tensor_output = self.graph.get_tensor_by_name('TfPoseEstimator/Openpose/concat_stage7:0')
-        self.tensor_heatMat = self.tensor_output[:, :, :, :19]
-        self.tensor_pafMat = self.tensor_output[:, :, :, 19:]
-        self.upsample_size = tf.placeholder(dtype=tf.int32, shape=(2,), name='upsample_size')
-        self.tensor_heatMat_up = tf.image.resize_area(self.tensor_output[:, :, :, :19], self.upsample_size,
-                                                      align_corners=False, name='upsample_heatmat')
-        self.tensor_pafMat_up = tf.image.resize_area(self.tensor_output[:, :, :, 19:], self.upsample_size,
-                                                     align_corners=False, name='upsample_pafmat')
+        tf.compat.v1.disable_eager_execution()
+        self.upsample_size = tf.compat.v1.placeholder(dtype=tf.int32, shape=(2,), name='upsample_size')
+        self.tensor_heatMat_up = tf.compat.v1.image.resize_area(self.tensor_output[:, :, :, :19], self.upsample_size, align_corners=False, name='upsample_heatmat')
+        self.tensor_pafMat_up = tf.compat.v1.image.resize_area(self.tensor_output[:, :, :, 19:], self.upsample_size, align_corners=False, name='upsample_pafmat')
         if trt_bool is True:
             smoother = Smoother({'data': self.tensor_heatMat_up}, 25, 3.0, 19)
         else:
@@ -356,10 +352,10 @@ class TfPoseEstimator:
         self.heatMat = self.pafMat = None
 
         # warm-up
-        self.persistent_sess.run(tf.variables_initializer(
-            [v for v in tf.global_variables() if
+        self.persistent_sess.run(tf.compat.v1.variables_initializer(
+            [v for v in tf.compat.v1.global_variables() if
              v.name.split(':')[0] in [x.decode('utf-8') for x in
-                                      self.persistent_sess.run(tf.report_uninitialized_variables())]
+                                      self.persistent_sess.run(tf.compat.v1.report_uninitialized_variables())]
              ])
         )
         self.persistent_sess.run(
@@ -393,7 +389,7 @@ class TfPoseEstimator:
         pass
 
     def get_flops(self):
-        flops = tf.profiler.profile(self.graph, options=tf.profiler.ProfileOptionBuilder.float_operation())
+        flops = tf.compat.v1.profiler.profile(self.graph, options=tf.profiler.ProfileOptionBuilder.float_operation())
         return flops.total_float_ops
 
     @staticmethod
