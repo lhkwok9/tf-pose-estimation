@@ -67,10 +67,6 @@ $ cd tf-pose-estimation
 $ python setup.py install  # Or, `pip install -e .`
 ```
 
-## Models & Performances
-
-See [experiments.md](./etc/experiments.md)
-
 ### Download Tensorflow Graph File(pb file)
 
 Before running demo, you should download graph files. You can deploy this graph on your mobile or other platforms.
