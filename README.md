@@ -54,7 +54,7 @@ $ pip3 install -r requirements.txt
 Build c++ library for post processing. See : https://github.com/ildoonet/tf-pose-estimation/tree/master/tf_pose/pafprocess
 ```
 $ cd tf_pose/pafprocess
-$ swig -python -c++ pafprocess.i && python3 setup.py build_ext --inplace # Or, `swig -python -c++ pafprocess.i && python setup.py build_ext --inplace`
+$ swig -python -c++ pafprocess.i && python3 setup.py build_ext --inplace  # Or, `swig -python -c++ pafprocess.i && python setup.py build_ext --inplace`
 ```
 
 ### Package Install
