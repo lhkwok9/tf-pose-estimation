@@ -16,6 +16,7 @@ Implemented features are listed here : [features](./etcs/feature.md)
 
 ## Important Updates
 
+- 2021.6.27 Known Problem: cannot set --tensorrt parameter to 'True'.
 - 2021.2.15 (forked) Environment with tensorflow 2.3 is now supported. Tensorflow 1.x is no longer supported.
 - 2019.3.12 Add new models using mobilenet-v2 architecture. See : [experiments.md](./etcs/experiments.md)
 - 2018.5.21 Post-processing part is implemented in c++. It is required compiling the part. See: https://github.com/ildoonet/tf-pose-estimation/tree/master/src/pafprocess
